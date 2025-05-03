@@ -1,78 +1,20 @@
 <?php
 require('template/header.phtml'); ?>
-
-<style>
-    .card-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    .facility-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .facility-card h3 {
-        margin-top: 0;
-    }
-
-    .facility-card button,
-    .facility-card .button {
-        margin-top: 10px;
-        padding: 10px 15px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .facility-card button:hover,
-    .facility-card .button:hover {
-        background-color: #0056b3;
-    }
-
-    .facilities {
-        margin-bottom: 5rem;
-    }
-
-    .load-more-container {
-        text-align: center;
-        margin-top: 2rem;
-    }
-
-    .load-more-btn {
-        padding: 12px 24px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-
-    .load-more-btn:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-    }
-</style>
+  
+<link rel="stylesheet" href="/Views/styles/guestuser.css" />
 
 <main>
     <section class="welcome">
         <h1>Welcome to ecoBuddy</h1>
         <p>Browse and discover eco-friendly facilities around you.</p>
+        <input type="text" id="search-query" class="search-input" placeholder="Search facilities..." oninput="filterFacilities()" style="width: 50%; padding: 10px; margin: 20px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" />
     </section>
 
     <section class="facilities">
         <h2>Eco Facilities</h2>
         <div class="card-container" id="facility-list">
             <?php foreach ($view->facilityDataSet as $facilityData) { ?>
-                <div class="facility-card">
+                <div class="facility-card" data-title="<?php echo htmlspecialchars($facilityData->getTitle()); ?>" data-category="<?php echo htmlspecialchars($facilityData->getCategory()); ?>" data-house-number="<?php echo htmlspecialchars($facilityData->getHouseNumber()); ?>" data-post-code="<?php echo htmlspecialchars($facilityData->getPostCode()); ?>">
                     <h3><?php echo $facilityData->getTitle(); ?></h3>
                     <p><strong>Category:</strong> <?php echo $facilityData->getCategory(); ?></p>
                     <p><strong>Description:</strong> <?php echo $facilityData->getDescription(); ?></p>
@@ -87,6 +29,30 @@ require('template/header.phtml'); ?>
         </div>
     </section>
 </main>
+<script>
+function filterFacilities() {
+    const query = document.getElementById('search-query').value.toLowerCase();
+    const facilityCards = document.querySelectorAll('.facility-card');
+
+    facilityCards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const category = card.getAttribute('data-category').toLowerCase();
+        const houseNumber = card.getAttribute('data-house-number').toLowerCase();
+        const postCode = card.getAttribute('data-post-code').toLowerCase();
+
+        if (
+            title.includes(query) ||
+            category.includes(query) ||
+            houseNumber.includes(query) ||
+            postCode.includes(query)
+        ) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 
 <script>
 let nextPage = 2;
@@ -103,6 +69,10 @@ loadMoreBtn.addEventListener('click', function() {
                 data.data.forEach(facility => {
                     const card = document.createElement('div');
                     card.className = 'facility-card';
+                    card.setAttribute('data-title', facility.title);
+                    card.setAttribute('data-category', facility.category);
+                    card.setAttribute('data-house-number', facility.houseNumber);
+                    card.setAttribute('data-post-code', facility.postcode);
                     card.innerHTML = `
                         <h3>${escapeHtml(facility.title)}</h3>
                         <p><strong>Category:</strong> ${escapeHtml(facility.category)}</p>

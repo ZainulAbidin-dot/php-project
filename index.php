@@ -2,7 +2,7 @@
 require_once("auth-helpers.php");
 
 if(!isLoggedIn()) {
-  header("Location: signin.php");
+  header("Location: guestuser.php");
   exit;
 } else {
   redirectToHomePage();

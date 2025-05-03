@@ -14,7 +14,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the username and password from the form
     $username = $_POST['username'];
     $password = $_POST['password'];
+    // Validate the password
+    if (strlen($password) < 12) {
+        $errorMessage = 'Password must be at least 12 characters long.';
+    } elseif (!preg_match('/[A-Z]/', $password)) {
+        $errorMessage = 'Password must include at least one uppercase letter.';
+    } elseif (!preg_match('/[a-z]/', $password)) {
+        $errorMessage = 'Password must include at least one lowercase letter.';
+    } elseif (!preg_match('/[0-9]/', $password)) {
+        $errorMessage = 'Password must include at least one number.';
+    } elseif (!preg_match('/[\W_]/', $password)) {
+        $errorMessage = 'Password must include at least one symbol.';
+    } elseif (preg_match('/\b\w+\b/', $password)) {
+        $errorMessage = 'Password must not be a dictionary word or a common name.';
+    }
 
+    // If there's an error, stop further execution
+    if (!empty($errorMessage)) {
+        require_once('Views/signup.phtml');
+        exit;
+    }
     // Connect to the database
     $db = Database::getInstance()->getdbConnection();
 
