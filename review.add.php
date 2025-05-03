@@ -1,32 +1,29 @@
 <?php
 require_once('Models/Database.php');
 require_once('Models/ReviewDataSet.php');
+require_once('auth-helpers.php');
 
-session_start(); // Start session to manage logged-in users
-
-// Check if the user is logged in
-if (!isset($_SESSION['loggedIn']) || !$_SESSION['loggedIn']) {
-    header('Location: index.php'); // Redirect to login page if not logged in
-    exit;
+if(!isLoggedIn()) {
+    redirectToLoginPage(); // Redirect to the login page if not logged in
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the updated facility details from the form
     $review = $_POST['review'];
-    $userId = $_SESSION['userId'];
+    $facilityId = $_POST['facility_id'];
+    $userId = getUser()['id'];
 
     // Handle CRUD operations
     $reviewDataSet = new ReviewDataSet();
 
     try {
-        $isUpdated = $reviewDataSet->addReview($userId, $review);
-        // if ($isUpdated) {
-        //     $successMessage = 'Facility updated successfully!';
-        // } else {
-        //     $errorMessage = 'Failed to update the facility.';
-        // }
-        
-        header('Location: /guestuser.php'); // Redirect to the dashboard
+        $isUpdated = $reviewDataSet->addReview([
+            'user_id' => $userId,
+            'facility_id' => $facilityId,
+            'review' => $review
+        ]);
+
+        header("Location: facility.view.php?facilityId=$facilityId");
+
         exit;
     } catch (Exception $e) {
         $errorMessage = 'An error occurred: ' . $e->getMessage();

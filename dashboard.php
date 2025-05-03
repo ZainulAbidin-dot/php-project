@@ -3,6 +3,8 @@ require_once('Models/Database.php');
 require_once('Models/UserDataSet.php');
 require_once('Models/FacilityDataSet.php');
 
+session_start(); // Start session to manage logged-in users
+
 $view = new stdClass();
 $view->pageTitle = "Dashboard - EcoBuddy System";
 

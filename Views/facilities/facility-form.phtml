@@ -11,11 +11,10 @@
   <header>
     <nav>
       <div class="logo">ecoBuddy</div>
-      <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
       <ul class="nav-links">
         <li><a href="/categories.php">Categories</a></li>
         <li><a href="/dashboard.php">Facilities</a></li>
-        <li><a href="/index.php">Logout</a></li>
+        <li><a href="/signin.php">Logout</a></li>
       </ul>
     </nav>
   </header>
@@ -31,7 +30,15 @@
       <label for="category">Category:</label>
       <select id="category" name="facilityCategory" required>
         <option value="">Select Category</option>
-      </select><br /><br />
+        <?php if (isset($view->categories) && is_array($view->categories)): ?>
+          <?php foreach ($view->categories as $category): ?>
+            <option value="<?= htmlspecialchars($category) ?>">
+              <?= htmlspecialchars($category) ?>
+            </option>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </select>
+      <br /><br />
 
       <label for="description">Description:</label>
       <textarea id="description" name="facilityDescription" maxlength="150" required></textarea><br /><br />
@@ -63,110 +70,6 @@
 
   <footer>
     <p>&copy; 2025 ecoBuddy. All rights reserved.</p>
-  </footer>
-
-  <script>
-    
-    const facilities = [
-      {
-        id: 1,
-        title: "Bike Rack at Library",
-        category: "Transportation",
-        description: "Secure bike parking near the city library",
-        houseNumber: 10,
-        streetName: "Main Street",
-        county: "Central County",
-        town: "Green Town",
-        postcode: "M50 ABC",
-        longitude: -0.1276,
-        latitude: 51.5074,
-        contributor: "John Doe"
-      },
-      {
-        id: 2,
-        title: "Solar Bench at Park",
-        category: "Energy",
-        description: "Solar-powered bench with charging ports",
-        houseNumber: 15,
-        streetName: "Park Lane",
-        county: "West County",
-        town: "Eco City",
-        postcode: "SW1A 1AA",
-        longitude: -0.1419,
-        latitude: 51.5014,
-        contributor: "Jane Smith"
-      },
-      {
-        id: 3,
-        title: "EV Charger - Downtown",
-        category: "Energy",
-        description: "Electric vehicle charging station in downtown",
-        houseNumber: 20,
-        streetName: "High Street",
-        county: "East County",
-        town: "Urban Ville",
-        postcode: "EC2A 3LT",
-        longitude: -0.0877,
-        latitude: 51.5155,
-        contributor: "Alex Brown"
-      }
-    ];
-
-    const categories = ['Transportation', 'Energy', 'Waste', 'Water'];
-    const contributors = ['John Doe', 'Jane Smith', 'Alex Brown', 'Sam Green'];
-
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    menuToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
-
-    const getQueryParam = (param) => new URLSearchParams(window.location.search).get(param);
-    const facilityId = getQueryParam('id');
-
-    // Populate dropdowns
-    function populateDropdown(id, list) {
-      const select = document.getElementById(id);
-      list.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item;
-        option.textContent = item;
-        select.appendChild(option);
-      });
-    }
-
-    populateDropdown('category', categories);
-    populateDropdown('contributor', contributors);
-
-    if (facilityId) {
-      const facility = facilities.find(f => f.id === parseInt(facilityId));
-      if (facility) {
-        document.getElementById('id').value = facility.id;
-        document.getElementById('title').value = facility.title;
-        document.getElementById('category').value = facility.category;
-        document.getElementById('description').value = facility.description;
-        document.getElementById('houseNumber').value = facility.houseNumber;
-        document.getElementById('streetName').value = facility.streetName;
-        document.getElementById('county').value = facility.county;
-        document.getElementById('town').value = facility.town;
-        document.getElementById('postcode').value = facility.postcode;
-        document.getElementById('lng').value = facility.longitude;
-        document.getElementById('lat').value = facility.latitude;
-        document.getElementById('contributor').value = facility.contributor;
-      }
-    }
-
-    // document.getElementById('facilityForm').addEventListener('submit', (e) => {
-    //   e.preventDefault();
-    //   const formData = new FormData(e.target);
-    //   const facilityData = Object.fromEntries(formData.entries());
-    //   facilityData.id = facilityData.id ? parseInt(facilityData.id) : Date.now();
-
-    //   // Here you'd normally send this data to your backend or update local storage
-    //   console.log(facilityId ? 'Editing facility:' : 'Adding new facility:', facilityData);
-    //   alert(`Facility ${facilityId ? 'updated' : 'added'} successfully!`);
-    //   window.location.href = '../../dashboard.php';
-    // });
-  </script>
+  </footer> 
 </body>
 </html>

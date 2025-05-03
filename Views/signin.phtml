@@ -10,7 +10,11 @@
 <body>
   <div class="login-container">
     <h1>Login</h1>
-    <form action="index.php" method="POST">
+    <?php if(isset($view->errorMessage)): ?>
+      <p class="error-message"><?php echo $view->errorMessage; ?></p>
+    <?php endif; ?>
+
+    <form action="signin.php" method="POST">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" required>
 

@@ -24,20 +24,34 @@ class ReviewDataSet {
         return $dataSet;
     }
 
-    public function addReview($user_id, $review) {
-        $sql = "INSERT INTO review (user_id, review) VALUES (:user_id, :review)";
+    public function fetchReviewsByFacilityID($facilityId) {
+        $sql = "SELECT review.*, users.username AS reviewer_name FROM review 
+            JOIN users ON review.user_id = users.id 
+            WHERE review.facility_id = :facility_id";
         $statement = $this->_dbHandle->prepare($sql);
-        $statement->bindValue(':user_id', $user_id);
-        $statement->bindValue(':review', $review);
+        $statement->bindValue(':facility_id', $facilityId);
+        $statement->execute();
+        $dataSet = [];
+        while ($row = $statement->fetch()) {
+            $dataSet[] = new Review($row);
+        }
+        return $dataSet;
+    }
+
+    public function addReview($data) {
+        $sql = "INSERT INTO review (user_id, facility_id, review) VALUES (:user_id, :facility_id, :review)";
+        $statement = $this->_dbHandle->prepare($sql);
+        $statement->bindValue(':user_id', $data['user_id']);
+        $statement->bindValue(':facility_id', $data['facility_id']);
+        $statement->bindValue(':review', $data['review']);
         $statement->execute();
     }
 
-    public function updateReview($id, $user_id, $review) {
-        $sql = "UPDATE review SET user_id = :user_id, review = :review WHERE id = :id";
+    public function updateReview($data) {
+        $sql = "UPDATE review SET review = :review WHERE id = :id";
         $statement = $this->_dbHandle->prepare($sql);
-        $statement->bindValue(':id', $id);
-        $statement->bindValue(':user_id', $user_id);
-        $statement->bindValue(':review', $review);
+        $statement->bindValue(':id', $data['id']);
+        $statement->bindValue(':review', $data['review']);
         $statement->execute();
     }
 
@@ -55,18 +69,5 @@ class ReviewDataSet {
         $statement->execute();
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         return new Review($row);
-    }
-
-    public function fetchReviewByUserID($id) {
-        $sql = "SELECT * FROM review WHERE user_id = :id";
-        $statement = $this->_dbHandle->prepare($sql);
-        $statement->bindValue(':id', $id);
-        $statement->execute();
-
-        $dataSet = [];
-        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $dataSet[] = new Review($row);
-        }
-        return $dataSet;
     }
 }

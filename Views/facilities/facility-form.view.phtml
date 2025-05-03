@@ -3,14 +3,14 @@ require(__DIR__ . '/../template/header.phtml'); ?>
 
   <link rel="stylesheet" href="/Views/styles/facility-form.css" />
   <link rel="stylesheet" href="/Views/styles/facility-view.css" />
-  <link rel="stylesheet" href="/Views/styles/dashboard.css" />
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-     <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <main>
     <h1>Facility Details</h1>
-    <div id="facilityDetails">
+    <div id="facilityDetails" class="facility-details">
       <p><strong>Title:</strong> <?= htmlspecialchars($view->facility->getTitle()) ?></p>
       <p><strong>Category:</strong> <?= htmlspecialchars($view->facility->getCategory()) ?></p>
       <p><strong>Description:</strong> <?= htmlspecialchars($view->facility->getDescription()) ?></p>
@@ -23,29 +23,32 @@ require(__DIR__ . '/../template/header.phtml'); ?>
       <p><strong>Latitude:</strong> <?= htmlspecialchars($view->facility->getLatitude()) ?></p>
     </div>
 
-    <?php if (!isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === false): ?>
-      <div id="reviews">
-      <h2>Reviews</h2>
-      <p>Please log in to view and add reviews for this facility.</p>
-      </div>
-    <?php else: ?>
-      <div id="reviews">
+    <div id="reviews">
       <h2>Reviews</h2>
       <?php if (!empty($view->reviews)): ?>
         <ul>
           <?php foreach ($view->reviews as $review): ?>
             <li>
-              <p><strong>Review Id No.: </strong><?= htmlspecialchars($review['id']) ?></p>
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <p>Message: <?= htmlspecialchars($review['review']) ?></p>
-                <button style='width: fit-content;' type="button" onclick="toggleEditForm(<?= htmlspecialchars($review['id']) ?>)">Edit</button>
+                <p><strong>Reviewer:</strong> <?= htmlspecialchars($review->getReviewerName()) ?></p>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <p>Message: <?= htmlspecialchars($review->getReview()) ?></p>
+                <?php if ($view->user && $view->user['id'] === $review->getUserId()): ?>
+                  <button style='width: fit-content;' type="button" onclick="toggleEditForm(<?= htmlspecialchars($review->getId()) ?>)">Edit</button>
+                <?php endif; ?>
               </div>
               
-              <form id="edit-form-<?= htmlspecialchars($review['id']) ?>" action="/review.edit.php" method="POST" style="display: none; margin: 0;">
-                <input type="hidden" name="id" value="<?= htmlspecialchars($review['id']) ?>">
-                <input type="text" name="review" value="<?= htmlspecialchars($review['review']) ?>" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px;">
-                <button type="submit">Save</button>
-              </form>
+              <?php if ($view->user && $view->user['id'] === $review->getUserId()): ?>
+                <form id="edit-form-<?= htmlspecialchars($review->getId()) ?>" action="/review.edit.php" method="POST" style="display: none; margin-top: 1em;">
+                  <input type="hidden" name="review_id" value="<?= htmlspecialchars($review->getId()) ?>">
+                  <input type="hidden" name="facility_id" value="<?= htmlspecialchars($view->facility->getId()) ?>">
+                  <textarea name="review" rows="3" cols="50" required><?= htmlspecialchars($review['review']) ?></textarea>
+                  <br />
+                  <button type="submit">Save</button>
+                </form>
+              <?php endif; ?>
+              
               
               <script>
                 function toggleEditForm(reviewId) {
@@ -59,15 +62,18 @@ require(__DIR__ . '/../template/header.phtml'); ?>
       <?php else: ?>
         <p>No reviews yet. Be the first to leave a review!</p>
       <?php endif; ?>
-      <form action="/review.add.php" method="POST">
-        <label for="review">Your Review:</label>
-        <textarea id="review" name="review" rows="4" cols="50" required></textarea>
-        <br />
-        <button type="submit">Submit Review</button>
-      </form>
-      </div>
-    <?php endif; ?>
+      
+      <?php if ($view->user && $view->user['role'] === 'user'): ?>
+        <form action="/review.add.php" method="POST">
+          <input type="hidden" name="facility_id" value="<?= htmlspecialchars($view->facility->getId()) ?>">
+          <label for="review">Your Review:</label>
+          <textarea id="review" name="review" rows="4" cols="50" required></textarea>
+          <br />
+          <button type="submit">Submit Review</button>
+        </form>
+      <?php endif; ?>
 
+    </div>
   </main>
 
   <div id="map" style="width: 600px; height: 400px; margin: auto; margin-bottom: 10rem; z-index: 0"></div>

@@ -2,68 +2,70 @@
 
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f7fff7;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1 {
-    text-align: center;
-    color: #2e7d32;
-    margin-top: 20px;
-  }
-  
-  /* Form Container */
-  form {
-    max-width: 600px;
-    margin: 30px auto;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Form Elements */
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  input[type="text"],
-  input[type="number"],
-  textarea,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  /* Styling for readonly input field */
-  input[readonly] {
-    background-color: #e9ecef;
-    cursor: not-allowed;
-  }
-  
-  /* Button Style */
-  button {
-    background-color: #2e7d32;
-    color: #ffffff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    font-size: 1rem;
-  }
-  
-  button:hover {
-    background-color: #27672b;
-  }
-  
+  font-family: Arial, sans-serif;
+  background-color: #f7fff7;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #2e7d32;
+  margin-top: 20px;
+}
+
+/* Form Container */
+form {
+  max-width: 600px;
+  margin: 30px auto;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Elements */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type='text'],
+input[type='number'],
+textarea,
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Styling for readonly input field */
+input[readonly] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Button Style */
+button,
+.button {
+  background-color: #2e7d32;
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+button:hover,
+.button:hover {
+  background-color: #27672b;
+}

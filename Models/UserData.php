@@ -35,7 +35,11 @@ class UserData {
         return $this->_role;
     }
 
-    // add in accessors for the other fields, check the view file in the given project to see what
-    // the accessor methods should be called
-
+    public function toObject() {
+        return [
+            'id' => $this->_id,
+            'username' => $this->_username,
+            'role' => $this->_role
+        ];
+    }
 }

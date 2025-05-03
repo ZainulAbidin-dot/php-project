@@ -25,7 +25,7 @@ class Database {
 
     private function __construct() {
         try { 
-             $this->_dbHandle = new PDO("sqlite:ecobuddy.sqlite");
+             $this->_dbHandle = new PDO("sqlite:" . dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . "ecobuddy.sqlite");
              $this->_dbHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
              // Ensure the 'users' table exists
@@ -61,8 +61,10 @@ class Database {
                 CREATE TABLE IF NOT EXISTS review (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
+                    facility_id INTEGER NOT NULL,
                     review TEXT NOT NULL,
-                    FOREIGN KEY(user_id) REFERENCES users(id)
+                    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY(facility_id) REFERENCES facility(id) ON DELETE CASCADE
                 )
             ");
         }

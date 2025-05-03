@@ -16,7 +16,7 @@
  * - Latitude
  * - Contributor
  */
-class FacilityData {
+class FacilityData implements JsonSerializable {
 
     // private fields
     protected $_id, $_title, $_category, $_description, $_houseNumber, $_streetName, $_county, $_town, $_postcode, $_longitude, $_latitude, $_contributor;
@@ -74,4 +74,22 @@ class FacilityData {
     public function getContributor() {
         return $this->_contributor;
     }
+
+    public function jsonSerialize() {
+        return [
+            'id' => $this->_id,
+            'title' => $this->_title,
+            'category' => $this->_category,
+            'description' => $this->_description,
+            'houseNumber' => $this->_houseNumber,
+            'streetName' => $this->_streetName,
+            'county' => $this->_county,
+            'town' => $this->_town,
+            'postcode' => $this->_postcode,
+            'longitude' => $this->_longitude,
+            'latitude' => $this->_latitude,
+            'contributor' => $this->_contributor
+        ];
+    }
+
 }

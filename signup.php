@@ -2,8 +2,6 @@
 require_once('Models/Database.php');
 require_once 'Models/UserDataSet.php';
 
-
-
 session_start(); // Start session to manage logged-in users
 $view = new stdClass();
 $view->pageTitle = "Signup - EcoBuddy System";
@@ -32,10 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $user = $userDataSet->addUser($_POST['username'], $_POST['password'], 'user');
 
-        $_SESSION['loggedIn'] = true;
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = 'user';
-        $_SESSION['userId'] = $user->getId();
+        // set the user in the session
+        $_SESSION['user'] = $user->toObject();
+
         header('Location: guestuser.php'); // Redirect to the dashboard page
         exit;
     }

@@ -1,17 +1,16 @@
 <?php
 require_once('Models/Database.php');
 require_once ('Models/FacilityDataSet.php');
+require_once('auth-helpers.php');
+require_once('categories.php');
 
-session_start(); // Start session to manage logged-in users
-
-// Check if the user is logged in
-if (!isset($_SESSION['loggedIn']) || !$_SESSION['loggedIn']) {
-    header('Location: index.php'); // Redirect to login page if not logged in
-    exit;
+if(!isUserLoggedInAndAdmin()) {
+    redirectToLogin(); 
 }
 
 $view = new stdClass();
 $view->pageTitle = "Add New Facility - EcoBuddy System";
+$view->categories = CATEGORIES;
 $errorMessage = '';
 $successMessage = '';
 
@@ -30,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postcode = $_POST['postcode'];
     $longitude = $_POST['longitude'];
     $latitude = $_POST['latitude'];
-    $contributor = $_SESSION['username'];
+    $contributor = getUser()['username']; // Assuming the contributor is the logged-in user
 
     try {
         // Add the new facility

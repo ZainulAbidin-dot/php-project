@@ -1,12 +1,17 @@
 <?php
 require_once('Models/Database.php');
 require_once('Models/FacilityDataSet.php');
+require_once('auth-helpers.php');
+require_once('categories.php');
 
-session_start(); // Start session to manage logged-in users
 
-// Check if the user is logged in
-if (!isset($_SESSION['loggedIn']) || !$_SESSION['loggedIn']) {
-    header('Location: index.php'); // Redirect to login page if not logged in
+if(!isUserLoggedInAndAdmin()) {
+    redirectToLogin(); 
+}
+
+// Check if user is logged in and has the right role
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    header('Location: signin.php'); // Redirect to login page if not logged in or not an admin
     exit;
 }
 
@@ -37,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     $view->facility = $facility; // Pass the facility details to the view
-    $view->categories = ['Transportation', 'Energy', 'Waste', 'Water'];
+    $view->categories = CATEGORIES;;
 } 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -60,11 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Update the facility
         $isUpdated = $facilityDataSet->updateFacility($facilityId, $facilityName, $facilityCategory, $facilityDescription, $houseNumber, $streetName, $county, $town, $postcode, $longitude, $latitude);
-        // if ($isUpdated) {
-        //     $successMessage = 'Facility updated successfully!';
-        // } else {
-        //     $errorMessage = 'Failed to update the facility.';
-        // }
+
         header('Location: dashboard.php'); // Redirect to the dashboard
         exit;
     } catch (Exception $e) {

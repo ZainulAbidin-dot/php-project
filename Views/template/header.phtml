@@ -3,22 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ecoBuddy - Categories Dashboard</title>
+  <title>
+    <?php if (isset($view->pageTitle)) { echo htmlspecialchars($view->pageTitle); } else { echo 'EcoBuddy System'; } ?>
+  </title>
   <link rel="stylesheet" href="/Views/styles/dashboard.css">
 </head>
 <body>
   <header>
     <nav>
       <div class="logo">ecoBuddy</div>
-      <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
       <ul class="nav-links">
-        <li><a href="#">Categories</a></li>
-        <li><a href="/dashboard.php">Facilities</a></li>
-        <?php if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true): ?>
-          <li><a href="/logout.php">Logout</a></li>
+        <?php if(!isset($_SESSION['user'])): ?>
+          <!-- NOT LOGGED IN -->
+          <li><a href="/guestuser.php">Facilities</a></li>
+          <li><a href="/signin.php">Login</a></li>
         <?php else: ?>
-          <li><a href="/index.php">Login</a></li>
+          <!-- IF ADMIN -->
+          <?php if ($_SESSION['user']['role'] == 'admin'): ?>
+            <li><a href="/dashboard.php">Facilities</a></li>
+            <li><a href="/logout.php">Logout</a></li>
+          <?php else: ?>
+            <li><a href="/guestuser.php">Facilities</a></li>
+            <li><a href="/logout.php">Logout</a></li>
           <?php endif; ?>
+        <?php endif; ?>
       </ul>
     </nav>
   </header>
+
+  
