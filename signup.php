@@ -25,15 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errorMessage = 'Password must include at least one number.';
     } elseif (!preg_match('/[\W_]/', $password)) {
         $errorMessage = 'Password must include at least one symbol.';
-    } elseif (preg_match('/\b\w+\b/', $password)) {
-        $errorMessage = 'Password must not be a dictionary word or a common name.';
     }
 
     // If there's an error, stop further execution
     if (!empty($errorMessage)) {
+        $view->errorMessage = $errorMessage;
         require_once('Views/signup.phtml');
         exit;
     }
+
     // Connect to the database
     $db = Database::getInstance()->getdbConnection();
 
@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($existingUser) {
         $errorMessage = 'Username already exists. Please choose a different one.';
+        $view->errorMessage = $errorMessage;
     } else {
         $user = $userDataSet->addUser($_POST['username'], $_POST['password'], 'user');
 

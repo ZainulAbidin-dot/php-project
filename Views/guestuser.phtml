@@ -25,7 +25,11 @@ require('template/header.phtml'); ?>
             <?php } ?>
         </div>
         <div class="load-more-container">
-            <button id="load-more-btn" class="load-more-btn">Load More</button>
+            <?php if (count($view->facilityDataSet) > 0) { ?>
+                <button id="load-more-btn" class="load-more-btn">Load More</button>
+            <?php } else { ?>
+                <p>No facilities found.</p>
+            <?php } ?>
         </div>
     </section>
 </main>

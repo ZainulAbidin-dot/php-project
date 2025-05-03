@@ -10,6 +10,9 @@
 <body>
   <div class="signup-container">
     <h1>Sign Up</h1>
+    <?php if(isset($view->errorMessage)): ?>
+      <p class="error-message"><?php echo $view->errorMessage; ?></p>
+    <?php endif; ?>
     <form action="signup.php" method="POST">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" required>

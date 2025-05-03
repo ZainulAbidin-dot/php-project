@@ -67,7 +67,22 @@ class Database {
                     FOREIGN KEY(facility_id) REFERENCES facility(id) ON DELETE CASCADE
                 )
             ");
+            // Ensure an admin user exists
+            $stmt = $this->_dbHandle->prepare("SELECT COUNT(*) FROM users WHERE role = :role");
+            $stmt->execute(['role' => 'admin']);
+            $adminExists = $stmt->fetchColumn();
+
+            if (!$adminExists) {
+                $defaultAdminUsername = 'admin';
+                $defaultAdminPassword = password_hash('admin123', PASSWORD_DEFAULT); // Default password
+                $this->_dbHandle->exec("
+                    INSERT INTO users (username, password, role) 
+                    VALUES ('$defaultAdminUsername', '$defaultAdminPassword', 'admin')
+                ");
+            }
         }
+
+        
         catch (PDOException $e) { // catch any failure to connect to the database
 	    echo $e->getMessage();
 	}
