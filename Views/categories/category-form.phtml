@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Category</title>
+  <link rel="stylesheet" href="../styles/facility-form.css" />
+  <link rel="stylesheet" href="../styles/dashboard.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">ecoBuddy</div>
+      <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../categories.html">Categories</a></li>
+        <li><a href="../dashboard.html">Facilities</a></li>
+        <li><a href="../index.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Category Form</h1>
+    <form id="categoryForm">
+      <input type="hidden" id="id" name="id" />
+
+      <label for="title">Name:</label>
+      <input type="text" id="title" name="title" maxlength="50" required /><br /><br />
+
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 ecoBuddy. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const categories = [
+      { id: 1, title: "Transportation" },
+      { id: 2, title: "Energy" },
+      { id: 3, title: "Waste" }
+    ];
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    const getQueryParam = (param) => new URLSearchParams(window.location.search).get(param);
+    const categoryId = getQueryParam('id');
+
+    if (categoryId) {
+      const category = categories.find(c => c.id === parseInt(categoryId));
+      if (category) {
+        document.getElementById('id').value = category.id;
+        document.getElementById('title').value = category.title;
+      }
+    }
+
+    document.getElementById('categoryForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const categoryData = Object.fromEntries(formData.entries());
+      categoryData.id = categoryData.id ? parseInt(categoryData.id) : Date.now();
+
+      // Here you'd normally send this data to your backend or update local storage
+      console.log(categoryId ? 'Editing Category:' : 'Adding new Category:', categoryData);
+      alert(`Category ${categoryId ? 'updated' : 'added'} successfully!`);
+      window.location.href = '../categories.html';
+    });
+  </script>
+</body>
+</html>

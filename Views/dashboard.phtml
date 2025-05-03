@@ -1,0 +1,122 @@
+<?php
+require('template/header.phtml'); ?>
+
+
+  <script>
+    function handleView(facilityId) {
+        window.location.href = `/facility.view.php?facilityId=${facilityId}`;
+    }
+
+    function handleEdit(facilityId) {
+        window.location.href = `/facility.edit.php?facilityId=${facilityId}`;
+    }
+
+    function handleDelete(facilityId) {
+      if (confirm(`Are you sure you want to delete facility ID ${facilityId}?`)) {
+        fetch('/facility.delete.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `id=${facilityId}`
+        })
+        .then(response => response.text())
+        .then(data => {
+          location.reload();
+          if (data === 'success') {
+            // Remove from UI
+            const rowToRemove = document.querySelector(`button.delete-btn[data-id="${facilityId}"]`).closest('tr');
+            if (rowToRemove) {
+              rowToRemove.remove();
+            }
+            alert(`Facility ${facilityId} deleted successfully`);
+          } else {
+            // alert('Delete failed: ' + data);
+          }
+        })
+        .catch(error => {
+          alert('Error occurred: ' + error);
+        });
+      }
+    }
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  </script>
+
+  <main>
+    <section class="welcome">
+      <h1>Welcome to ecoBuddy</h1>
+      <p>Browse and discover eco-friendly facilities around you.</p>
+    </section>
+    
+    <div class="row">
+        <div class="col-5">
+            <p><?php echo $view->dbMessage; ?></p>
+        </div>
+        <!-- <div class="col-7">
+            <p>Current script <?php echo $_SERVER["PHP_SELF"]; ?></p>
+        </div> -->
+    </div>
+
+    <section class="facilities">
+      <div class="flex">
+        <h2>Manage Eco Facilities (CRUD)</h2>
+        <button class="add-facility-btn nav-links"><a href="/facility.php" class="nav-links">Add New Facility</a></button>
+      </div>
+      <div class="table-container">
+        <table class="crud-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>House Number</th>
+              <th>Street Name</th>
+              <th>County</th>
+              <th>Town</th>
+              <th>Postcode</th>
+              <th>Longitude</th>
+              <th>Latitude</th>
+              <th>Contributor</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically populated here -->
+            <?php foreach ($view->facilityDataSet as $facilityData) {
+                  echo '<tr> <td>' .   $facilityData->getId() .
+                      '</td> <td>' . $facilityData->getTitle() .
+                      '</td> <td>' . $facilityData->getCategory() .
+                      '</td> <td>' . $facilityData->getDescription() .
+                      '</td> <td>' . $facilityData->getHouseNumber() .
+                      '</td> <td>' . $facilityData->getStreetName() .
+                      '</td> <td>' . $facilityData->getCountry() .
+                      '</td> <td>' . $facilityData->getTown() .
+                      '</td> <td>' . $facilityData->getPostCode() .
+                      '</td> <td>' . $facilityData->getLongitude() .
+                      '</td> <td>' . $facilityData->getLatitude() .
+                      '</td> <td>' . $facilityData->getContributor() .
+                      '</td> <td>' . 
+                      '<div class="action-buttons">' .
+                        '<button class="edit-btn" data-id="' . $facilityData->getId() . '" onclick="handleEdit(' . $facilityData->getId() . ')">Edit</button>' .
+                        '<button class="view-btn" data-id="' . $facilityData->getId() . '" onclick="handleView(' . $facilityData->getId() . ')">View</button>' .
+                      '<button class="delete-btn" data-id="' . $facilityData->getId() . '" onclick="handleDelete(' . $facilityData->getId() . ')">Delete</button>' .
+                      '</div>' .
+
+                      '</td> </td> </tr>';
+                  } 
+              ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+<?php require('template/footer.phtml'); ?>
+

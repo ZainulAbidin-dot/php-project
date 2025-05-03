@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facility</title>
+  <link rel="stylesheet" href="/Views/styles/facility-form.css" />
+  <link rel="stylesheet" href="/Views/styles/dashboard.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">ecoBuddy</div>
+      <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="/categories.php">Categories</a></li>
+        <li><a href="/dashboard.php">Facilities</a></li>
+        <li><a href="/index.php">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Facility Form</h1>
+    <form id="facilityForm" method="POST" action="/facility.edit.php">
+      <input type="hidden" id="id" name="id" value='<?= $view->facility->getId() ?>' />
+
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="facilityName" maxlength="50" value="<?= $view->facility->getTitle() ?>" required /><br /><br />
+
+      <label for="category">Category:</label>
+      <select id="category" name="facilityCategory" required>
+        <option value="">Select Category</option>
+        <?php foreach ($view->categories as $category): ?>
+          <option value="<?= $category ?>" <?= $view->facility->getCategory() === $category ? 'selected' : '' ?>><?= $category ?></option>
+        <?php endforeach; ?>
+      </select><br /><br />
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="facilityDescription" maxlength="150" required><?= $view->facility->getDescription() ?></textarea><br /><br />
+
+      <label for="houseNumber">House Number:</label>
+      <input type="text" id="houseNumber" name="houseNumber" maxlength="50" value="<?= $view->facility->getHouseNumber() ?>" /><br /><br />
+
+      <label for="streetName">Street Name:</label>
+      <input type="text" id="streetName" name="streetName" maxlength="50" value="<?= $view->facility->getStreetName() ?>" /><br /><br />
+
+      <label for="county">County:</label>
+      <input type="text" id="county" name="county" maxlength="50" value="<?= $view->facility->getCountry() ?>" /><br /><br />
+
+      <label for="town">Town:</label>
+      <input type="text" id="town" name="town" maxlength="50" value="<?= $view->facility->getTown() ?>" /><br /><br />
+
+      <label for="postcode">Postcode:</label>
+      <input type="text" id="postcode" name="postcode" maxlength="7" value="<?= $view->facility->getPostcode() ?>" required /><br /><br />
+
+      <label for="lng">Longitude:</label>
+      <input type="number" id="lng" name="longitude" step="0.0000001" value="<?= $view->facility->getLongitude() ?>" required /><br /><br />
+
+      <label for="lat">Latitude:</label>
+      <input type="number" id="lat" name="latitude" step="0.0000001" value="<?= $view->facility->getLatitude() ?>" required /><br /><br />
+      
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 ecoBuddy. All rights reserved.</p>
+  </footer>
+
+  <script>
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+
+  </script>
+</body>
+</html>

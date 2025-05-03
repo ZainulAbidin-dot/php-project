@@ -1,0 +1,81 @@
+<?php
+require('template/header.phtml'); ?>
+
+
+  <main>
+    <section class="welcome">
+      <h1>Welcome to ecoBuddy</h1>
+      <p>Manage categories of eco-friendly facilities here.</p>
+    </section>
+    
+    <section class="facilities">
+      <div class="flex">
+        <h2>Manage Categories (CRUD)</h2>
+        <button class="add-facility-btn" onclick="window.location.href='./categories/category-form.phtml'">Add New Category</button>
+      </div>
+      <div class="table-container">
+        <table class="crud-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically populated here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    const categories = [
+      { id: 1, title: "Transportation" },
+      { id: 2, title: "Energy" },
+      { id: 3, title: "Waste" }
+    ];
+
+    function handleEdit(categoryId) {
+      window.location.href = `./categories/category-form.phtml?id=${categoryId}`;
+    }
+
+    function handleDelete(categoryId) {
+      if (confirm(`Are you sure you want to delete category ID ${categoryId}?`)) {
+        const tableBody = document.querySelector('.crud-table tbody');
+        const rowToRemove = tableBody.querySelector(`button.delete-btn[data-id="${categoryId}"]`).closest('tr');
+        if (rowToRemove) rowToRemove.remove();
+        alert(`Category ${categoryId} deleted successfully`);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const tableBody = document.querySelector('.crud-table tbody');
+      categories.forEach(category => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${category.id}</td>
+          <td>${category.title}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="edit-btn" data-id="${category.id}" onclick="handleEdit(${category.id})">Edit</button>
+              <button class="delete-btn" data-id="${category.id}" onclick="handleDelete(${category.id})">Delete</button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    });
+  </script>
+
+
+<?php require('template/footer.phtml'); ?>
+
