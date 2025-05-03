@@ -28,12 +28,17 @@ class UserDataSet {
 
     public function addUser($username, $password, $role) {
         $sql = "INSERT INTO users (username, password, role)
-                VALUES (:username, :password, :role)";
+            VALUES (:username, :password, :role)";
         $statement = $this->_dbHandle->prepare($sql);
         $statement->bindValue(':username', $username);
         $statement->bindValue(':password', password_hash($password, PASSWORD_DEFAULT)); // Hash the password
         $statement->bindValue(':role', $role);
         $statement->execute();
+
+        $lastInsertId = $this->_dbHandle->lastInsertId(); // Get the ID of the newly created user
+
+        // Fetch the newly created user and return it as a UserData object
+        return $this->fetchUserByID($lastInsertId);
     }
     
     public function loginUser($username, $password) {
@@ -67,7 +72,7 @@ class UserDataSet {
     }
 
     public function fetchUserByID($id) {
-        $sql = "SELECT * FROM users WHERE user_id = :id";
+        $sql = "SELECT * FROM users WHERE id = :id";
         $statement = $this->_dbHandle->prepare($sql);
         $statement->bindValue(':id', $id);
         $statement->execute();

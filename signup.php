@@ -28,14 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $existingUser = $statement->fetch(PDO::FETCH_ASSOC);
 
     if ($existingUser) {
-        echo "User already exists";
         $errorMessage = 'Username already exists. Please choose a different one.';
     } else {
-        $userDataSet->addUser($_POST['username'], $_POST['password'], 'admin');
+        $user = $userDataSet->addUser($_POST['username'], $_POST['password'], 'user');
 
         $_SESSION['loggedIn'] = true;
         $_SESSION['username'] = $username;
-        header('Location: dashboard.php'); // Redirect to the dashboard page
+        $_SESSION['role'] = 'user';
+        $_SESSION['userId'] = $user->getId();
+        header('Location: guestuser.php'); // Redirect to the dashboard page
         exit;
     }
 }

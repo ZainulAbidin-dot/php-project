@@ -19,10 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     try {
         $user = $userDataSet->loginUser($username, $password);
+        // echo "User: " . $user->getUsername() . $user->getRole(); // Debugging line to check the user object
         if ($user) {
             $_SESSION['loggedIn'] = true;
+            $_SESSION['userId'] = $user->getId(); // Assuming UserData has a getUserId() method
             $_SESSION['username'] = $user->getUsername(); // Assuming UserData has a getUsername() method
-            header('Location: dashboard.php'); // Redirect to the dashboard
+            if($user->getRole() == 'admin') {
+                $_SESSION['role'] = 'admin'; // Set the role in the session
+                header('Location: dashboard.php'); // Redirect to the dashboard
+            } else {
+                $_SESSION['role'] = 'user'; // Set the role in the session
+                header('Location: guestuser.php'); // Redirect to the dashboard
+            }
             exit;
         } else {
             $errorMessage = 'Invalid username or password';

@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Facility Details</title>
+<?php
+require(__DIR__ . '/../template/header.phtml'); ?>
+
   <link rel="stylesheet" href="/Views/styles/facility-form.css" />
+  <link rel="stylesheet" href="/Views/styles/facility-view.css" />
   <link rel="stylesheet" href="/Views/styles/dashboard.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
      <!-- Make sure you put this AFTER Leaflet's CSS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""></script>
-</head>
-<body>
-  <header>
-    <nav>
-      <div class="logo">ecoBuddy</div>
-      <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-      <ul class="nav-links">
-        <li><a href="/categories.html">Categories</a></li>
-        <li><a href="/dashboard.html">Facilities</a></li>
-        <li><a href="/index.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <main>
     <h1>Facility Details</h1>
@@ -41,39 +22,88 @@
       <p><strong>Longitude:</strong> <?= htmlspecialchars($view->facility->getLongitude()) ?></p>
       <p><strong>Latitude:</strong> <?= htmlspecialchars($view->facility->getLatitude()) ?></p>
     </div>
+
+    <?php if (!isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === false): ?>
+      <div id="reviews">
+      <h2>Reviews</h2>
+      <p>Please log in to view and add reviews for this facility.</p>
+      </div>
+    <?php else: ?>
+      <div id="reviews">
+      <h2>Reviews</h2>
+      <?php if (!empty($view->reviews)): ?>
+        <ul>
+          <?php foreach ($view->reviews as $review): ?>
+            <li>
+              <p><strong>Review Id No.: </strong><?= htmlspecialchars($review['id']) ?></p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <p>Message: <?= htmlspecialchars($review['review']) ?></p>
+                <button style='width: fit-content;' type="button" onclick="toggleEditForm(<?= htmlspecialchars($review['id']) ?>)">Edit</button>
+              </div>
+              
+              <form id="edit-form-<?= htmlspecialchars($review['id']) ?>" action="/review.edit.php" method="POST" style="display: none; margin: 0;">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($review['id']) ?>">
+                <input type="text" name="review" value="<?= htmlspecialchars($review['review']) ?>" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit">Save</button>
+              </form>
+              
+              <script>
+                function toggleEditForm(reviewId) {
+                  const form = document.getElementById(`edit-form-${reviewId}`);
+                  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                }
+              </script>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php else: ?>
+        <p>No reviews yet. Be the first to leave a review!</p>
+      <?php endif; ?>
+      <form action="/review.add.php" method="POST">
+        <label for="review">Your Review:</label>
+        <textarea id="review" name="review" rows="4" cols="50" required></textarea>
+        <br />
+        <button type="submit">Submit Review</button>
+      </form>
+      </div>
+    <?php endif; ?>
+
   </main>
 
   <div id="map" style="width: 600px; height: 400px; margin: auto; margin-bottom: 10rem; z-index: 0"></div>
   <script>
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const map = L.map('map').setView([latitude, longitude], 10);
 
-    const map = L.map('map').setView([51.505, -0.09], 13);
+        L.marker([latitude, longitude]).addTo(map)
+          .bindPopup('<b>Your Location</b><br />This is your current location.').openPopup();
+        
+        L.marker([<?= htmlspecialchars($view->facility->getLatitude()) ?>, <?= htmlspecialchars($view->facility->getLongitude()) ?>]).addTo(map)
+        .bindPopup('<b>Facility Location</b><br />This is the facility location.').openPopup();
+
+
+        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+      }, function(error) {
+        console.error('Error getting location:', error);
+        const map = L.map('map').setView([51.505, -0.09], 13);
+      });
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      const map = L.map('map').setView([51.505, -0.09], 13);
+    }
 
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    const marker = L.marker([51.5, -0.09]).addTo(map)
-      .bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
-
-    const circle = L.circle([51.508, -0.11], {
-      color: 'red',
-      fillColor: '#f03',
-      fillOpacity: 0.5,
-      radius: 500
-    }).addTo(map).bindPopup('I am a circle.');
-
-    const polygon = L.polygon([
-      [51.509, -0.08],
-      [51.503, -0.06],
-      [51.51, -0.047]
-    ]).addTo(map).bindPopup('I am a polygon.');
-
-
-    const popup = L.popup()
-      .setLatLng([51.513, -0.09])
-      .setContent('I am a standalone popup.')
-      .openOn(map);
 
     function onMapClick(e) {
       popup
@@ -83,10 +113,7 @@
     }
 
     map.on('click', onMapClick);
-
   </script>
-
-
 
   <footer>
     <p>&copy; 2025 ecoBuddy. All rights reserved.</p>

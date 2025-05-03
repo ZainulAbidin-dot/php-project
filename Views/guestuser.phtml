@@ -1,0 +1,83 @@
+<?php
+require('template/header.phtml'); ?>
+
+<style>
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .facility-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-card h3 {
+        margin-top: 0;
+    }
+
+    .facility-card button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .facility-card button:hover {
+        background-color: #0056b3;
+    }
+
+    .facilities {
+        margin-bottom: 5rem;
+    }
+</style>
+
+<script>
+    function handleView(facilityId) {
+        window.location.href = `/facility.view.php?facilityId=${facilityId}`;
+    }
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+</script>
+
+<main>
+    <section class="welcome">
+        <h1>Welcome to ecoBuddy</h1>
+        <p>Browse and discover eco-friendly facilities around you.</p>
+    </section>
+    
+    <div class="row">
+        <div class="col-5">
+            <p><?php echo $view->dbMessage; ?></p>
+        </div>
+    </div>
+
+    <section class="facilities">
+        <h2>Eco Facilities</h2>
+        <div class="card-container">
+            <?php foreach ($view->facilityDataSet as $facilityData) { ?>
+                <div class="facility-card">
+                    <h3><?php echo $facilityData->getTitle(); ?></h3>
+                    <p><strong>Category:</strong> <?php echo $facilityData->getCategory(); ?></p>
+                    <p><strong>Description:</strong> <?php echo $facilityData->getDescription(); ?></p>
+                    <p><strong>Location:</strong> <?php echo $facilityData->getHouseNumber() . ', ' . $facilityData->getStreetName() . ', ' . $facilityData->getTown() . ', ' . $facilityData->getPostCode(); ?></p>
+                    <p><strong>Contributor:</strong> <?php echo $facilityData->getContributor(); ?></p>
+                    <button class="view-btn" onclick="handleView(<?php echo $facilityData->getId(); ?>)">View</button>
+                </div>
+            <?php } ?>
+        </div>
+    </section>
+</main>
+
+<?php require('template/footer.phtml'); ?>

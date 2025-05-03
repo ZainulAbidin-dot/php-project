@@ -55,6 +55,16 @@ class Database {
                     contributor TEXT NOT NULL
                 )
             ");
+
+            // Ensure the 'review' table exists
+            $this->_dbHandle->exec("
+                CREATE TABLE IF NOT EXISTS review (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    review TEXT NOT NULL,
+                    FOREIGN KEY(user_id) REFERENCES users(id)
+                )
+            ");
         }
         catch (PDOException $e) { // catch any failure to connect to the database
 	    echo $e->getMessage();

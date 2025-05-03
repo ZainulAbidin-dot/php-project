@@ -76,4 +76,20 @@ class FacilityDataSet {
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         return new FacilityData($row);
     }
+
+    public function fetchAllFacilitiesPagination($limit, $offset) {
+        $sqlQuery = 'SELECT * FROM facility LIMIT :limit OFFSET :offset;';
+
+        $statement = $this->_dbHandle->prepare($sqlQuery);
+        $statement->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $statement->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        $dataSet = [];
+        while ($row = $statement->fetch()) {
+            $dataSet[] = new FacilityData($row);
+        }
+        return $dataSet;
+    }
+
 }
